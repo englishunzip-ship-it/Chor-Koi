@@ -1,0 +1,114 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@theme {
+  --color-primary: #ef4444;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Disable copy globally except inputs */
+body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+input, textarea, select, [contenteditable] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+}
+
+/* Disable zoom on touch (except map) */
+body {
+  touch-action: pan-x pan-y;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  touch-action: auto;
+}
+
+/* Swiper */
+.swiper { width: 100%; height: 100%; }
+.swiper-slide img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.swiper-pagination-bullet-active { background: #ef4444 !important; }
+
+/* Custom Map Pin Markers - Improved */
+.marker-pin-wrapper {
+  position: relative;
+  width: 44px;
+  height: 56px;
+}
+
+.marker-pin {
+  width: 42px;
+  height: 42px;
+  border-radius: 50% 50% 50% 0;
+  position: absolute;
+  transform: rotate(-45deg);
+  left: 50%;
+  top: 50%;
+  margin: -21px 0 0 -21px;
+  border: 3px solid white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.marker-icon-inner {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  z-index: 10;
+  top: 0;
+  left: 1px;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.2));
+  line-height: 1;
+}
+
+.custom-div-icon {
+  background: transparent;
+  border: none;
+}
+
+/* Safe area for iOS */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Material ripple effect on buttons */
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* No scrollbar utility */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Leaflet popup improvements */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15) !important;
+}
+
+.leaflet-popup-tip {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
+}

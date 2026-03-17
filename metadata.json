@@ -1,0 +1,5 @@
+{
+  "name": "Chor Koi",
+  "description": "A crowd-powered corruption reporting platform for public accountability.",
+  "requestFramePermissions": ["geolocation"]
+}

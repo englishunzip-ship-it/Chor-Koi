@@ -1,0 +1,45 @@
+{
+  "entities": {
+    "Report": {
+      "title": "Corruption Report",
+      "description": "A report of a corruption incident submitted by a citizen.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Short title of the incident" },
+        "corruptionType": { "type": "string", "description": "Category of corruption" },
+        "description": { "type": "string", "description": "Detailed description" },
+        "locationName": { "type": "string", "description": "Name of the location" },
+        "latitude": { "type": "number", "description": "Latitude coordinate" },
+        "longitude": { "type": "number", "description": "Longitude coordinate" },
+        "date": { "type": "string", "format": "date", "description": "Date of the incident" },
+        "evidenceLinks": { "type": "array", "items": { "type": "string" }, "description": "Links to images or external evidence" },
+        "votesTrue": { "type": "integer", "description": "Count of 'True' votes" },
+        "votesFalse": { "type": "integer", "description": "Count of 'False' votes" },
+        "votesNeedEvidence": { "type": "integer", "description": "Count of 'Need Evidence' votes" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp of creation" }
+      },
+      "required": ["title", "corruptionType", "description", "locationName", "latitude", "longitude", "date", "createdAt"]
+    },
+    "CorruptionType": {
+      "title": "Corruption Type",
+      "description": "A category of corruption with an icon and color.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "icon": { "type": "string" },
+        "color": { "type": "string" }
+      },
+      "required": ["name", "icon", "color"]
+    }
+  },
+  "firestore": {
+    "/reports/{reportId}": {
+      "schema": "Report",
+      "description": "Collection of corruption reports"
+    },
+    "/corruptionTypes/{typeId}": {
+      "schema": "CorruptionType",
+      "description": "Collection of corruption categories"
+    }
+  }
+}
