@@ -1,88 +1,39 @@
-// ===============================================================
-// Assumed Data Model
-// ===============================================================
-//
-// Collection: reports
-// Fields:
-//   - title: string (required)
-//   - corruptionType: string (required)
-//   - description: string (required)
-//   - locationName: string (required)
-//   - latitude: number (required)
-//   - longitude: number (required)
-//   - date: string (required)
-//   - evidenceLinks: list (required)
-//   - votesTrue: number (required)
-//   - votesFalse: number (required)
-//   - votesNeedEvidence: number (required)
-//   - createdAt: timestamp (required)
-//
-// Collection: corruptionTypes
-// Fields:
-//   - name: string (required)
-//   - icon: string (required)
-//   - color: string (required)
-//
-// ===============================================================
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Helper Functions
+    // Helper functions
     function isAuthenticated() {
       return request.auth != null;
     }
     
-    function isAdmin() {
-      return isAuthenticated() && 
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
-         request.auth.token.email == "memory02backup@gmail.com");
-    }
-
     function isValidReport(data) {
       return data.title is string && data.title.size() > 0 && data.title.size() < 200 &&
+             data.description is string && data.description.size() > 0 &&
              data.corruptionType is string &&
-             data.description is string && data.description.size() < 5000 &&
              data.locationName is string &&
              data.latitude is number &&
              data.longitude is number &&
-             data.date is string &&
-             data.evidenceLinks is list &&
              data.votesTrue is number &&
              data.votesFalse is number &&
              data.votesNeedEvidence is number;
     }
 
     match /reports/{reportId} {
-      // Publicly readable for the crowd-powered aspect
       allow read: if true;
-      
-      // Anyone can create a report
       allow create: if isValidReport(request.resource.data);
-      
-      // Update allowed for voting (anyone) or full edit (admin)
-      allow update: if isAdmin() || (
-        // Voting logic: only vote counts can change, and only by 1
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['votesTrue', 'votesFalse', 'votesNeedEvidence']) &&
-        (
-          (request.resource.data.votesTrue == resource.data.votesTrue + 1 && request.resource.data.votesFalse == resource.data.votesFalse && request.resource.data.votesNeedEvidence == resource.data.votesNeedEvidence) ||
-          (request.resource.data.votesFalse == resource.data.votesFalse + 1 && request.resource.data.votesTrue == resource.data.votesTrue && request.resource.data.votesNeedEvidence == resource.data.votesNeedEvidence) ||
-          (request.resource.data.votesNeedEvidence == resource.data.votesNeedEvidence + 1 && request.resource.data.votesTrue == resource.data.votesTrue && request.resource.data.votesFalse == resource.data.votesFalse)
-        )
+      allow update: if (
+        // Allow voting (incrementing counters)
+        request.resource.data.diff(resource.data).affectedKeys().hasAny(['votesTrue', 'votesFalse', 'votesNeedEvidence'])
+      ) || (
+        // Allow admin full update
+        isAuthenticated()
       );
-      
-      // Only admin can delete
-      allow delete: if isAdmin();
+      allow delete: if isAuthenticated();
     }
-
+    
     match /corruptionTypes/{typeId} {
       allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow write: if isAuthenticated();
     }
   }
 }
